@@ -3,4 +3,4 @@
 サンプルアプリケーションは、Java(Quarkus)で実装されている。
 
 ### 構成
-  - [Java(Quarkus)のサンプルアプリケーション](https://github.com/nautible/nautible-app-examples/nautible-app-examples-java/README.md)
+  - [Java(Quarkus)のサンプルアプリケーション](./nautible-app-examples-java/README.md)
