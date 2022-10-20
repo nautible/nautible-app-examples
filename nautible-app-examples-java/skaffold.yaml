@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: nautible-app-examples
+build:
+  artifacts:
+  - image: public.ecr.aws/nautible/nautible-app-examples-java
+    # Dockerfileを指定するやり方では、skaffoldはappのjarファイル監視し、javaコードの変更などを監視しない。
+    # そのため、skaffold customを利用し、プロジェクト全体のソースを監視し、変更があった場合にはapp image ビルドを行う
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+          - "."
+        ignore:
+          - "**/target/**"
+  local:
+    push: false
+deploy:
+  kustomize:
+    paths:
+      - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-java/overlays/aws/local-dev
+
+profiles:
+- name: aws
