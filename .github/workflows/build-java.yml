@@ -42,7 +42,7 @@ jobs:
 
     # AWS
     - name: pacakge with Maven for aws
-      run: mvn -B package -Dcloud=aws --file pom.xml -Dquarkus.package.type=fast-jar
+      run: mvn -B package -Dcloud=aws --file nautible-app-examples-java/pom.xml -Dquarkus.package.type=fast-jar
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
