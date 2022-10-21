@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: nautible-app-examples API
+  description: nautible examples Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: localhost
+paths:
+  /examples/hello:
+    get:
+      tags:
+        - RestExamplesService
+      operationId: hello
+      summary: Call Hello
+      description: Return Hello
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            text/plain:
+              schema:
+                type: string
