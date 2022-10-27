@@ -1,0 +1,32 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: nautible-app-examples
+build:
+  artifacts:
+  - image: public.ecr.aws/nautible/nautible-app-examples-go
+    custom:
+      buildCommand: ./scripts/build.sh aws
+      dependencies:
+        paths:
+          - "."
+        ignore:
+          - ".github/**"
+          - "api/**"
+          - "assets/**"
+          - "scripts/**"
+          - "**/go.sum"
+          - ".gitignore"
+          - "LICENSE"
+          - "NOTICE"
+          - "*.md"
+  local:
+    push: false
+    useBuildkit: true
+deploy:
+  kustomize:
+    paths:
+      - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-go/overlays/aws/local-dev
+
+profiles:
+- name: aws
