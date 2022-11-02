@@ -1,0 +1,31 @@
+{
+    "name": "nautible-app-examples-node",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "generate": "openapi-generator-plus -c config.yml",
+        "start": "ts-node src/index.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "express-winston": "^4.2.0",
+        "passport": "^0.6.0",
+        "winston": "^3.8.2"
+    },
+    "devDependencies": {
+        "@openapi-generator-plus/typescript-express-passport-server-generator": "^2.6.0",
+        "@types/express": "^4.17.14",
+        "@types/node": "^18.11.8",
+        "@types/passport": "^1.0.11",
+        "@typescript-eslint/eslint-plugin": "^5.41.0",
+        "@typescript-eslint/parser": "^5.41.0",
+        "eslint": "^8.26.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-unused-imports": "^2.0.0",
+        "openapi-generator-plus": "^2.3.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.8.4"
+    }
+}
