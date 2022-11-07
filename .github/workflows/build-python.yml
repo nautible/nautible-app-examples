@@ -1,4 +1,4 @@
-name: Node CI
+name: Python CI
 
 on:
   push:
@@ -37,14 +37,14 @@ jobs:
       id: login-ecr
       run: |
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/nautible
-    - name: examples node Build, tag, and push image to Amazon ECR
+    - name: examples python Build, tag, and push image to Amazon ECR
       id: build-image-service-ecr
       env:
         DOCKER_BUILDKIT: 1
         ECR_REGISTRY: public.ecr.aws/nautible
-        ECR_REPOSITORY: nautible-app-examples-node
+        ECR_REPOSITORY: nautible-app-examples-python
       run: |
-        cd $GITHUB_WORKSPACE/nautible-app-examples-node
+        cd $GITHUB_WORKSPACE/nautible-app-examples-python
         docker build --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -65,7 +65,7 @@ jobs:
           exit 0
         fi
         git fetch origin $BRANCH && git checkout $BRANCH
-        sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-node/overlays/aws/dev/$APP_NAME-deployment.yaml
+        sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/aws/dev/$APP_NAME-deployment.yaml
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
@@ -84,7 +84,7 @@ jobs:
     #     cd $GITHUB_WORKSPACE/nautible-app-$APP_NAME-manifest
     #     git fetch origin $BRANCH && git checkout $BRANCH
     #     git checkout -b $TAG $BRANCH
-    #     sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-node/overlays/aws/dev/$APP_NAME-deployment.yaml
+    #     sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/aws/dev/$APP_NAME-deployment.yaml
 
     #     git config user.name github-actions
     #     git config user.email github-actions@github.com
