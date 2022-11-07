@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: nautible-app-examples API
+  description: nautible examples Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: localhost
+paths:
+  /healthz:
+    get:
+      tags:
+        - HealthCheckService
+      operationId: healthz
+      summary: Service Health Check
+      description: Returns a status code
+      responses:
+        200:
+          description: successful operation
+        503:
+          description: Service Unavailable
+  /examples/hello:
+    get:
+      tags:
+        - RestExamplesService
+      operationId: hello
+      summary: Call Hello
+      description: Return Hello
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            text/plain:
+              schema:
+                type: string
