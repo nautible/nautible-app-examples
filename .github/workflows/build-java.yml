@@ -17,6 +17,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment: develop # for azure oidc
+
     env:
       IMAGE_TAG: ${{ github.sha }}
 
@@ -100,6 +102,7 @@ jobs:
         TOKEN: ${{ secrets.PAT }}
         BRANCH: ${{ github.ref_name }}
         APP_NAME: examples
+        ACR_REGISTRY: nautibledevacr.azurecr.io
       run: |
         cd $GITHUB_WORKSPACE/nautible-app-$APP_NAME-manifest
         HTTP_STATUS=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" https://api.github.com/repos/nautible/nautible-app-$APP_NAME-manifest/branches/$BRANCH -o /dev/null -w '%{http_code}\n' -s)
@@ -124,6 +127,7 @@ jobs:
     #     BRANCH: ${{ github.ref_name }}
     #     TAG: update-image-feature-${{ github.sha }}
     #     APP_NAME: examples
+    #     ACR_REGISTRY: nautibledevacr.azurecr.io
     #   run: |
     #     cd $GITHUB_WORKSPACE/nautible-app-$APP_NAME-manifest
     #     git fetch origin $BRANCH && git checkout $BRANCH
