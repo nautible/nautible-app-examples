@@ -82,7 +82,7 @@ jobs:
       run: |
         az acr login -n nautibledevacr
     - name: examples java Build, tag, and push image to Azure ACR
-      id: build-image-servicmanifesutono kousine-acr
+      id: build-image-service-acr
       env:
         DOCKER_BUILDKIT: 1
         ACR_REGISTRY: nautibledevacr.azurecr.io
