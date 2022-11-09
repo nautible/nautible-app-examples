@@ -1,5 +1,5 @@
 # nautible-app-examples (Golang) Project
-このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。  
+このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。
 
 ## アプリケーションの主要アーキテクチャ
 * [Golang](https://go.dev/)
@@ -7,11 +7,18 @@
 * [Kubernetes](https://kubernetes.io/)
 * [Docker](https://www.docker.com/)
 * [AWS](https://aws.amazon.com/)
+* [Azure](https://azure.microsoft.com/ja-jp/)
 
-## Examplesサービスが利用するAWSリソースとローカル環境での代替
+## Examplesサービスが利用するリソースとローカル環境での代替
+### AWS
 |  開発環境(AWS)  |  ローカル環境  | 備考 |
 | ---- | ---- | ---- |
 | ECR  | -    |      |
+
+### Azure
+|  開発環境(Azure)  |  ローカル環境  | 備考 |
+| ---- | ---- | ---- |
+| ACR  | -    |      |
 
 ## ディレクトリ構成
 [Standard Go Project Layout](https://github.com/golang-standards/project-layout/blob/master/README_ja.md)を参考に構成
@@ -37,7 +44,7 @@
 ### skaffoldによるアプリケーション起動
 
 ```bash
-skaffold dev --profile=(aws) --port-forward --filename=./scripts/skaffold.yaml
+skaffold dev --profile=(aws|azure) --port-forward --filename=./scripts/skaffold.yaml
 ```
 ※wslなどのLinux環境で実行することを前提としています
 

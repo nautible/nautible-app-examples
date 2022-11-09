@@ -30,3 +30,26 @@ deploy:
 
 profiles:
 - name: aws
+- name: azure
+  build:
+    artifacts:
+    - image: nautibledevacr.azurecr.io/nautible-app-examples-go
+      custom:
+        buildCommand: ./scripts/build.sh azure
+        dependencies:
+          paths:
+            - "."
+          ignore:
+            - ".github/**"
+            - "api/**"
+            - "assets/**"
+            - "scripts/**"
+            - "**/go.sum"
+            - ".gitignore"
+            - "LICENSE"
+            - "NOTICE"
+            - "*.md"
+  deploy:
+    kustomize:
+      paths:
+        - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-go/overlays/azure/local-dev
