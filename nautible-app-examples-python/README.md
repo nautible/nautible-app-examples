@@ -7,7 +7,7 @@
 * [Kubernetes](https://kubernetes.io/)
 * [Docker](https://www.docker.com/)
 * [AWS](https://aws.amazon.com/)
-* [Azure](https://azure.microsoft.com/ja-jp/)
+* [Azure](https://azure.microsoft.com/)
 
 ## Examplesサービスが利用するリソースとローカル環境での代替
 ### AWS
