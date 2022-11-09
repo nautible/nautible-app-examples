@@ -35,6 +35,7 @@ jobs:
         BRANCH: ${{ github.ref_name }}
         TAG: update-image-feature-${{ github.sha }}
         APP_NAME: examples
+        ACR_REGISTRY: nautibledevacr.azurecr.io
       run: |
         cd $GITHUB_WORKSPACE/nautible-app-$APP_NAME-manifest
         git fetch origin $BRANCH && git checkout $BRANCH
@@ -43,7 +44,10 @@ jobs:
         sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-go:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-go:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-go/overlays/aws/dev/$APP_NAME-deployment.yaml
         sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-node:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-node/overlays/aws/dev/$APP_NAME-deployment.yaml
         sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/aws/dev/$APP_NAME-deployment.yaml
-
+        sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-java/overlays/azure/dev/$APP_NAME-deployment.yaml
+        sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-go:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-go:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-go/overlays/azure/dev/$APP_NAME-deployment.yaml
+        sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-node:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-node:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-node/overlays/azure/dev/$APP_NAME-deployment.yaml
+        sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/azure/dev/$APP_NAME-deployment.yaml
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
