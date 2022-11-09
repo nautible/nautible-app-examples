@@ -76,7 +76,7 @@ jobs:
           ACR_REPOSITORY: nautible-app-examples-go
         run: |
           cd $GITHUB_WORKSPACE/nautible-app-examples-go
-          docker build --cache-from=$ACR_REGISTRY/$ACR_REGISTRY:latest --build-arg CLOUD=azure --build-arg BUILDKIT_INLINE_CACHE=1 -t $ACR_REGISTRY/$ACR_REGISTRY:latest -t $ACR_REGISTRY/$ACR_REGISTRY:$IMAGE_TAG -f ./package/examples/Dockerfile .
+          docker build --cache-from=$ACR_REGISTRY/$ACR_REPOSITORY:latest --build-arg CLOUD=azure --build-arg BUILDKIT_INLINE_CACHE=1 -t $ACR_REGISTRY/$ACR_REPOSITORY:latest -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG -f ./package/examples/Dockerfile .
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:latest
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
 
