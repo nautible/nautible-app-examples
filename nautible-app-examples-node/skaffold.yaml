@@ -19,3 +19,18 @@ deploy:
 
 profiles:
 - name: aws
+- name: azure
+  build:
+    artifacts:
+    - image: nautibledevacr.azurecr.io/nautible-app-examples-node
+      custom:
+        buildCommand: ./build.sh
+        dependencies:
+          paths:
+            - "."
+    local:
+      push: false
+  deploy:
+    kustomize:
+      paths:
+        - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-node/overlays/azure/local-dev

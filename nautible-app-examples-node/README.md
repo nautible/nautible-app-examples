@@ -1,5 +1,5 @@
 # nautible-app-examples (Node.js) Project
-このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。  
+このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。
 
 ## アプリケーションの主要アーキテクチャ
 * [Node.js](https://nodejs.org/ja/)
@@ -7,11 +7,18 @@
 * [Kubernetes](https://kubernetes.io/)
 * [Docker](https://www.docker.com/)
 * [AWS](https://aws.amazon.com/)
+* [Azure](https://azure.microsoft.com/)
 
-## Examplesサービスが利用するAWSリソースとローカル環境での代替
+## Examplesサービスが利用するリソースとローカル環境での代替
+### AWS
 |  開発環境(AWS)  |  ローカル環境  | 備考 |
 | ---- | ---- | ---- |
 | ECR  | -    |      |
+
+### Azure
+|  開発環境(Azure)  |  ローカル環境  | 備考 |
+| ---- | ---- | ---- |
+| ACR  | -    |      |
 
 ## ローカル環境での開発方法
 ### ローカル開発イメージ図
@@ -33,7 +40,7 @@
 ### skaffoldによるアプリケーション起動
 
 ```bash
-skaffold dev --profile=(aws) --port-forward
+skaffold dev --profile=(aws|azure) --port-forward
 ```
 ※wslなどのLinux環境で実行することを前提としています
 
