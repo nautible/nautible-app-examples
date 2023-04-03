@@ -1,11 +1,8 @@
-# nautible-app-examples (java) Project
+# nautible-app-examples (Node.js) Project
 このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。
-Quarkusアプリケーション共通の内容については[こちら](https://github.com/nautible/docs/quarkus/README.md)を参照。
 
 ## アプリケーションの主要アーキテクチャ
-* [Java11](https://www.oracle.com/java/)
-* [Quarkus](https://quarkus.io/)
-* [Maven](https://maven.apache.org/)
+* [Node.js](https://nodejs.org/ja/)
 * REST
 * [Kubernetes](https://kubernetes.io/)
 * [Docker](https://www.docker.com/)
@@ -25,7 +22,7 @@ Quarkusアプリケーション共通の内容については[こちら](https:/
 
 ## ローカル環境での開発方法
 ### ローカル開発イメージ図
-![ローカル開発イメージ](local-dev-image.png)
+![ローカル開発イメージ](./local-dev-image.png)
 
 ### 事前準備
 * [dockerのインストール](https://docs.docker.com/get-docker/)
@@ -46,3 +43,28 @@ Quarkusアプリケーション共通の内容については[こちら](https:/
 skaffold dev --profile=(aws|azure) --port-forward
 ```
 ※wslなどのLinux環境で実行することを前提としています
+
+## （参考）アプリケーション構築時の手順
+### Node.jsバージョン
+v18.12.0
+
+### OpenAPI
+- [OpenAPI Generator Plus CLI](https://github.com/karlvr/openapi-generator-plus)を導入
+```bash
+npm install openapi-generator-plus@2.3.1 -g
+```
+
+- プロジェクト生成
+```bash
+npm init openapi-generator-plus nautible-app-examples-node
+※コマンド実行後「Server」「typescript-express-passport-server」を選択する
+npm install
+```
+
+- YAMLファイルを準備
+  - 参考：api/内のYAMLファイル
+
+- コード生成
+```bash
+npx openapi-generator-plus -g @openapi-generator-plus/typescript-express-passport-server-generator -o src/openapi_server/examples api/examples.yaml
+```

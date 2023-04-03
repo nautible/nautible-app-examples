@@ -1,11 +1,8 @@
-# nautible-app-examples (java) Project
+# nautible-app-examples (Python) Project
 このドキュメントには最低限の動作を確認するための、サンプルアプリケーションについて記載する。
-Quarkusアプリケーション共通の内容については[こちら](https://github.com/nautible/docs/quarkus/README.md)を参照。
 
 ## アプリケーションの主要アーキテクチャ
-* [Java11](https://www.oracle.com/java/)
-* [Quarkus](https://quarkus.io/)
-* [Maven](https://maven.apache.org/)
+* [Python](https://www.python.org/)
 * REST
 * [Kubernetes](https://kubernetes.io/)
 * [Docker](https://www.docker.com/)
@@ -25,7 +22,7 @@ Quarkusアプリケーション共通の内容については[こちら](https:/
 
 ## ローカル環境での開発方法
 ### ローカル開発イメージ図
-![ローカル開発イメージ](local-dev-image.png)
+![ローカル開発イメージ](./local-dev-image.png)
 
 ### 事前準備
 * [dockerのインストール](https://docs.docker.com/get-docker/)
@@ -46,3 +43,18 @@ Quarkusアプリケーション共通の内容については[こちら](https:/
 skaffold dev --profile=(aws|azure) --port-forward
 ```
 ※wslなどのLinux環境で実行することを前提としています
+
+## （参考）アプリケーション構築時の手順
+### pythonバージョン
+3.10
+
+### OpenAPI
+- [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator)を導入
+
+- YAMLファイルを準備
+  - 参考：api/内のYAMLファイル
+
+- コード生成
+```bash
+openapi-generator-cli generate -i api/examples.yaml  -g python-fastapi -o .
+```

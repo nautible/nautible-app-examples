@@ -1,0 +1,36 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: nautible-app-examples
+build:
+  artifacts:
+  - image: public.ecr.aws/nautible/nautible-app-examples-node
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+          - "."
+  local:
+    push: false
+deploy:
+  kustomize:
+    paths:
+      - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-node/overlays/aws/local-dev
+
+profiles:
+- name: aws
+- name: azure
+  build:
+    artifacts:
+    - image: nautibledevacr.azurecr.io/nautible-app-examples-node
+      custom:
+        buildCommand: ./build.sh
+        dependencies:
+          paths:
+            - "."
+    local:
+      push: false
+  deploy:
+    kustomize:
+      paths:
+        - ../../nautible-app-examples-manifest/nautible-app-examples-manifest-node/overlays/azure/local-dev

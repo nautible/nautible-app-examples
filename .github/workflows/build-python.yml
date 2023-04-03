@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
-name: Java CI with Maven
+name: Python CI
 
 on:
   push:
@@ -30,20 +27,8 @@ jobs:
           repository: nautible/nautible-app-examples-manifest
           path: nautible-app-examples-manifest
           token: ${{ secrets.PAT }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
 
       # AWS
-      - name: pacakge with Maven for aws
-        run: mvn -B package -Dcloud=aws --file nautible-app-examples-java/pom.xml -Dquarkus.package.type=fast-jar
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -53,24 +38,20 @@ jobs:
         id: login-ecr
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/nautible
-      - name: examples java Build, tag, and push image to Amazon ECR
+      - name: examples python Build, tag, and push image to Amazon ECR
         id: build-image-service-ecr
         env:
           DOCKER_BUILDKIT: 1
           ECR_REGISTRY: public.ecr.aws/nautible
-          ECR_REPOSITORY: nautible-app-examples-java
+          ECR_REPOSITORY: nautible-app-examples-python
         run: |
-          cd $GITHUB_WORKSPACE/nautible-app-examples-java
-          docker build --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./src/main/docker/Dockerfile.jvm .
+          cd $GITHUB_WORKSPACE/nautible-app-examples-python
+          docker build --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/Dockerfile .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       # Azure
-      - name: pacakge with Maven for Azure
-        run: |
-          cd $GITHUB_WORKSPACE
-          mvn -B clean package -Dcloud=azure --file nautible-app-examples-java/pom.xml -Dquarkus.package.type=fast-jar
       - name: Login via Azure CLI
         id: login-acr
         uses: azure/login@v1
@@ -82,15 +63,15 @@ jobs:
         id: login-azure-acr
         run: |
           az acr login -n nautibledevacr
-      - name: examples java Build, tag, and push image to Azure ACR
+      - name: examples python Build, tag, and push image to Azure ACR
         id: build-image-service-acr
         env:
           DOCKER_BUILDKIT: 1
           ACR_REGISTRY: nautibledevacr.azurecr.io
-          ACR_REPOSITORY: nautible-app-examples-java
+          ACR_REPOSITORY: nautible-app-examples-python
         run: |
-          cd $GITHUB_WORKSPACE/nautible-app-examples-java
-          docker build --cache-from=$ACR_REGISTRY/$ACR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ACR_REGISTRY/$ACR_REPOSITORY:latest -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG -f ./src/main/docker/Dockerfile.jvm .
+          cd $GITHUB_WORKSPACE/nautible-app-examples-python
+          docker build --cache-from=$ACR_REGISTRY/$ACR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ACR_REGISTRY/$ACR_REPOSITORY:latest -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG -f ./docker/Dockerfile .
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:latest
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
 
@@ -110,8 +91,8 @@ jobs:
             exit 0
           fi
           git fetch origin $BRANCH && git checkout $BRANCH
-          sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-java:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-java:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-java/overlays/aws/dev/$APP_NAME-deployment.yaml
-          sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-java/overlays/azure/dev/$APP_NAME-deployment.yaml
+          sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/aws/dev/$APP_NAME-deployment.yaml
+          sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/azure/dev/$APP_NAME-deployment.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -131,8 +112,8 @@ jobs:
     #     cd $GITHUB_WORKSPACE/nautible-app-$APP_NAME-manifest
     #     git fetch origin $BRANCH && git checkout $BRANCH
     #     git checkout -b $TAG $BRANCH
-    #     sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-java:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-java:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-java/overlays/aws/dev/$APP_NAME-deployment.yaml
-    #     sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-java:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-java/overlays/azure/dev/$APP_NAME-deployment.yaml
+    #     sed -i 's/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:\(.*\)/image: public.ecr.aws\/nautible\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/aws/dev/$APP_NAME-deployment.yaml
+    #     sed -i 's/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:\(.*\)/image: '$ACR_REGISTRY'\/nautible-app-'$APP_NAME'-python:'$IMAGE_TAG'/' ./nautible-app-$APP_NAME-manifest-python/overlays/azure/dev/$APP_NAME-deployment.yaml
     #     git config user.name github-actions
     #     git config user.email github-actions@github.com
     #     git add .

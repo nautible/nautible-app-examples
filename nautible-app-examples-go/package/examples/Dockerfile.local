@@ -1,0 +1,22 @@
+FROM golang:1.18.0 as builder
+
+WORKDIR /go/app
+
+COPY ./pkg/ ./pkg/
+COPY ./cmd/examples/ ./cmd/examples/
+COPY ./go.mod  ./
+COPY ./go.sum  ./
+
+ARG CLOUD=aws
+ARG CGO_ENABLED=0
+ARG GOOS=linux
+ARG GOARCH=amd64
+
+RUN cd cmd/examples && \
+    go build \
+    -o /go/app/bin/main \
+    -ldflags '-s -w -X main.target='$CLOUD
+
+EXPOSE 8080
+
+ENTRYPOINT ["/go/app/bin/main"]
