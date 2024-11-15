@@ -5,7 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: ["develop", "feature/*", "hotfix/*"]
+    branches: ['develop', 'feature/*', 'hotfix/*']
   workflow_dispatch:
 
 permissions:
@@ -23,19 +23,20 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout manifest repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nautible/nautible-app-examples-manifest
           path: nautible-app-examples-manifest
           token: ${{ secrets.PAT }}
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 11
+          distribution: 'temurin'
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -45,14 +46,23 @@ jobs:
       - name: pacakge with Maven for aws
         run: mvn -B package -Dcloud=aws --file nautible-app-examples-java/pom.xml -Dquarkus.package.type=fast-jar
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        id: login-aws
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/nautible-dev-githubactions-ecr-access-role
           aws-region: ap-northeast-1
+        continue-on-error: true
+
+      - name: login-aws when command failure
+        run: echo "result - aws login failure"
+        if: steps.login-aws.outcome == 'failure'
+
       - name: Login to Amazon public ECR
         id: login-ecr
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/nautible
+        if: steps.login-aws.outcome == 'success'
+
       - name: examples java Build, tag, and push image to Amazon ECR
         id: build-image-service-ecr
         env:
@@ -65,6 +75,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        if: steps.login-aws.outcome == 'success'
 
       # Azure
       - name: pacakge with Maven for Azure
@@ -72,16 +83,24 @@ jobs:
           cd $GITHUB_WORKSPACE
           mvn -B clean package -Dcloud=azure --file nautible-app-examples-java/pom.xml -Dquarkus.package.type=fast-jar
       - name: Login via Azure CLI
-        id: login-acr
+        id: login-azure
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        continue-on-error: true
+
+      - name: login-azure when command failure
+        run: echo "result - azure login failure"
+        if: steps.login-azure.outcome == 'failure'
+
       - name: Login Azure Acr
         id: login-azure-acr
         run: |
           az acr login -n nautibledevacr
+        if: steps.login-azure.outcome == 'success'
+
       - name: examples java Build, tag, and push image to Azure ACR
         id: build-image-service-acr
         env:
@@ -93,6 +112,7 @@ jobs:
           docker build --cache-from=$ACR_REGISTRY/$ACR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 -t $ACR_REGISTRY/$ACR_REPOSITORY:latest -t $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG -f ./src/main/docker/Dockerfile.jvm .
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:latest
           docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
+        if: steps.login-azure.outcome == 'success'
 
       - name: update feature branch image tag
         id: update-feature-branch-image-tag
