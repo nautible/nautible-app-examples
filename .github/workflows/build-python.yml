@@ -30,6 +30,7 @@ jobs:
 
       # AWS
       - name: Configure AWS credentials
+        id: login-aws
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/nautible-dev-githubactions-ecr-access-role
